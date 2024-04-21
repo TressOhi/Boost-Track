@@ -76,7 +76,7 @@ export default function AdminDashboard() {
 
         <main className="-mt-32">
           <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-            <div className="rounded-lg bg-white px-16 py-10 shadow min-h-96">
+            <div className="rounded-lg bg-white px-6 md:px-16 py-10 shadow min-h-96">
               {rosters.length < 1 ? (
                 <NotFound
                   title="No Rosters Found"
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
                     {rosters.map((roster, i) => (
                       <div
                         key={`roster${i}`}
-                        className="flex w-[31.5%] gap-x-6 gap-y-3"
+                        className="flex w-full md:w-[48%] xl:w-[31.5%] gap-x-6 gap-y-3"
                       >
                         <div className="flex flex-1 border border-[#D1D5DB] rounded-md ">
                           <div
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-[#E5E7EB] mt-16 py-4 px-6">
+                  <div className="flex flex-wrap items-center justify-between border-t border-[#E5E7EB] gap-4 mt-16 py-4 px-6">
                     <div>
                       <p className="text-sm text-[#374151]">
                         Showing {offset + 1} to {offset + rosters.length} of{" "}
