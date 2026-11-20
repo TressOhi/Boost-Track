@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { toast } from "react-toastify";
 import { hideLoader, showLoader } from "../../components/Loader";
 import { requestPasswordReset } from "../../services/auth";
@@ -19,9 +19,9 @@ export default function RequestResetPassword() {
       setEmail("");
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      hideLoader();
     }
-
-    hideLoader();
   };
 
   return (

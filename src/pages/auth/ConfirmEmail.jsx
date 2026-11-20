@@ -1,32 +1,32 @@
-import { useEffect } from "react";
-import { redirect, useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { confirmEmail } from "../../services/auth";
 
 export default function ConfirmEmail() {
   const location = useLocation();
-
-  const searchParams = new URLSearchParams(location.search);
-  const token = searchParams.get("token");
+  const navigate = useNavigate();
+  const token = new URLSearchParams(location.search).get("token");
+  // StrictMode runs effects twice in development; the second call would reuse
+  // an already-consumed token and show a spurious error.
+  const attempted = useRef(false);
 
   useEffect(() => {
-    const handleEmailVerification = async (token) => {
-      try {
-        await confirmEmail(token);
-        toast.success("Account verified successfully");
-
-        redirect("/auth/login");
-      } catch (error) {
-        toast.error(error ?? "Could not verify email");
-      }
-    };
+    if (attempted.current) return;
+    attempted.current = true;
 
     if (!token) {
-      redirect("/auth/login");
-    } else {
-      handleEmailVerification(token);
+      navigate("/auth/login", { replace: true });
+      return;
     }
-  }, [token]);
+
+    window.history.replaceState(null, "", location.pathname);
+
+    confirmEmail(token)
+      .then(() => toast.success("Account verified successfully"))
+      .catch((error) => toast.error(error.message))
+      .finally(() => navigate("/auth/login", { replace: true }));
+  }, [token, navigate, location.pathname]);
 
   return (
     <>

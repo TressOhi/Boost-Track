@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { redirect, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router";
 import { toast } from "react-toastify";
 import { hideLoader, showLoader } from "../../components/Loader";
 import { signup } from "../../services/auth";
@@ -8,6 +8,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullname, setFullname] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,12 +21,12 @@ export default function Signup() {
         "Account Successfully created, activate your account by following the instructions in your email."
       );
 
-      redirect("/auth/login");
+      navigate("/auth/login");
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      hideLoader();
     }
-
-    hideLoader();
   };
 
   return (
@@ -100,7 +101,8 @@ export default function Signup() {
                     name="password"
                     placeholder="Password"
                     type="password"
-                    autoComplete="current-password"
+                    minLength={8}
+                    autoComplete="new-password"
                     required
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}

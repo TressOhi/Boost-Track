@@ -16,18 +16,6 @@ export default function AdminDashboard() {
   const [totalResults, setTotalResults] = useState(1);
   const [deleteModalIsActive, setDeleteModalIsActive] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      showLoader();
-
-      await fetchRosters();
-
-      hideLoader();
-    };
-
-    fetchData();
-  }, []);
-
   const fetchRosters = async (offset) => {
     try {
       const response = await getRosters({ offset: offset ?? 0 });
@@ -40,9 +28,21 @@ export default function AdminDashboard() {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      showLoader();
+
+      await fetchRosters();
+
+      hideLoader();
+    };
+
+    fetchData();
+  }, []);
+
   const nextPage = async () => {
     const newOffset = offset + 10;
-    if (newOffset <= totalResults) {
+    if (newOffset < totalResults) {
       showLoader();
       await fetchRosters(newOffset);
       hideLoader();

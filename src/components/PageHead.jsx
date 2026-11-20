@@ -1,4 +1,5 @@
-import { redirect, useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router";
+import { clearToken } from "../services/session";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -24,11 +25,14 @@ export default function PageHead({ title }) {
     { name: "Players", href: "/players", current: pathname === "/players" },
   ];
 
-  const logout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-    });
-    redirect("/auth/login");
+  const navigate = useNavigate();
+
+  // The old version POSTed to a non-existent "/api/auth/logout" on the frontend
+  // origin and never removed the token, so "Sign out" left you signed in.
+  // If the API grows a token-revocation endpoint, call it here first.
+  const logout = () => {
+    clearToken();
+    navigate("/auth/login", { replace: true });
   };
 
   return (

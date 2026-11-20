@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { redirect, useLocation, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation, Link } from "react-router";
 import { toast } from "react-toastify";
 import { hideLoader, showLoader } from "../../components/Loader";
 import { resetPassword } from "../../services/auth";
@@ -9,9 +9,22 @@ export default function ResetPassword() {
   const [password2, setPassword2] = useState("");
 
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const searchParams = new URLSearchParams(location.search);
-  const token = searchParams.get("token");
+  // Read the one-time token once, then drop it from the address bar so it
+  // doesn't linger in history or get shared by copy-pasting the URL.
+  const [token] = useState(() =>
+    new URLSearchParams(location.search).get("token")
+  );
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("This reset link is invalid or incomplete");
+      navigate("/auth/password/reset-request", { replace: true });
+    } else {
+      window.history.replaceState(null, "", location.pathname);
+    }
+  }, [token, navigate, location.pathname]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,12 +40,12 @@ export default function ResetPassword() {
       await resetPassword(password, token);
       toast.success("Password reset successfully");
 
-      redirect("/auth/login");
+      navigate("/auth/login", { replace: true });
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      hideLoader();
     }
-
-    hideLoader();
   };
 
   return (
@@ -64,6 +77,7 @@ export default function ResetPassword() {
                     id="password"
                     name="password"
                     type="password"
+                    minLength={8}
                     placeholder="Choose New Password"
                     required
                     value={password}
@@ -85,6 +99,7 @@ export default function ResetPassword() {
                     id="password2"
                     name="password2"
                     type="password"
+                    minLength={8}
                     placeholder="Re-enter Password"
                     required
                     value={password2}

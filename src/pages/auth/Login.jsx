@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { redirect, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router";
 import { toast } from "react-toastify";
 import { hideLoader, showLoader } from "../../components/Loader";
 import { login } from "../../services/auth";
+import { getSession, homePathFor, setToken } from "../../services/session";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,14 +17,14 @@ export default function Login() {
 
     try {
       const response = await login(email, password);
-      localStorage.setItem("token", response.access_token);
+      setToken(response.access_token);
 
-      redirect("/dashboard");
+      navigate(homePathFor(getSession()), { replace: true });
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      hideLoader();
     }
-
-    hideLoader();
   };
 
   return (

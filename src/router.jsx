@@ -1,6 +1,11 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router";
 
-import { AuthRoute, ProtectedAdminRoute } from "./components/Protectedroute";
+import {
+  AuthRoute,
+  ProtectedAdminRoute,
+  ProtectedRoute,
+} from "./components/Protectedroute";
+import NotFound from "./components/NotFound";
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -8,6 +13,7 @@ import ConfirmEmail from "./pages/auth/ConfirmEmail";
 import RequestResetPassword from "./pages/auth/RequestResetPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import AdminDashboard from "./pages/admin/Dashboard";
+import UserDashboard from "./pages/user/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +72,24 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    // Login sent users here, but the route didn't exist.
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <UserDashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "*",
+    element: (
+      <NotFound
+        title="Page not found"
+        description="The page you're looking for doesn't exist."
+      />
+    ),
   },
 ]);
 

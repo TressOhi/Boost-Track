@@ -16,18 +16,6 @@ export default function UserDashboard() {
   const [totalResults, setTotalResults] = useState(1);
   const [deleteModalIsActive, setDeleteModalIsActive] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      showLoader();
-
-      await fetchRosters();
-
-      hideLoader();
-    };
-
-    fetchData();
-  }, []);
-
   const fetchRosters = async (offset) => {
     try {
       const response = await getRosters({ offset: offset ?? 0 });
@@ -40,9 +28,21 @@ export default function UserDashboard() {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      showLoader();
+
+      await fetchRosters();
+
+      hideLoader();
+    };
+
+    fetchData();
+  }, []);
+
   const nextPage = async () => {
     const newOffset = offset + 10;
-    if (newOffset <= totalResults) {
+    if (newOffset < totalResults) {
       showLoader();
       await fetchRosters(newOffset);
       hideLoader();
@@ -108,25 +108,25 @@ export default function UserDashboard() {
                                 {roster.teams_size}
                               </p>
                               <p className="text-sm text-[#6B7280] top-[-10px] right-0 absolute">
-                                {roster.status == "running" && (
+                                {roster.status === "running" && (
                                   <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 me-3 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
                                     RUNNING
                                   </span>
                                 )}
 
-                                {roster.status == "failed" && (
+                                {roster.status === "failed" && (
                                   <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 me-3 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">
                                     FAILED
                                   </span>
                                 )}
 
-                                {roster.status == "completed" && (
+                                {roster.status === "completed" && (
                                   <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 me-3 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
                                     Green
                                   </span>
                                 )}
 
-                                {roster.status == "idled" && (
+                                {roster.status === "idled" && (
                                   <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 me-3 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300">
                                     IDLED
                                   </span>
